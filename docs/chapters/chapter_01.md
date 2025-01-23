@@ -1,24 +1,141 @@
-## Bioschemas profiles for training resources
+## Introduction
 
 [add-bioschemas file='docs/training-material.yaml']
 
-Many training related resources will include pages describing tutorials or courses. As such, they are marked up using the following three profiles:
+What are the main component we need to make this basic example work? We need at least one HTML page for the course (overview) which we call index.html, another HTML page tutorial01.html which contains the training material, a rendering mechanism to serve the HTML pages as web site and ideally a sitemap.xml document to allow easy integration into TeSS.
+We have prepared a GitHub repo with these three files index.html, tutorial01.html and sitemap.xml. The rendering mechanism will be provided by GitHub itself and will be explained later.
 
-- `TrainingMaterial`: A profile describing training materials in life sciences, it can be used on its own (as it happens with the Bioschemas tutorials) or in combination with a `CourseInstance`.
+## Bioschemas profiles for training resources
+
+Many training related resources will include pages describing courses and/or tutorials. As such, they are marked up using the following three profiles:
+
 - `Course`: A profile describing a course from a generic point of view, i.e., the learning objectives of a course rather than where and when it is delivered.
 - `CourseInstance`: A profile describing a particular instance of a course, i.e., an edition of a course that is scheduled for specific dates and happening in a specific location (that of course can be online or on-site, virtual or real).
+- `TrainingMaterial`: A profile describing training materials, it can be used on its own (as it happens with the Bioschemas tutorials) or in combination with a `CourseInstance`.
 
 Note that the `CourseInstance` profile is used in tandem with the `Course` profile, i.e., a `CourseInstance` does not exist without a `Course` but a `Course` can exist without a `CourseInstance` (there are no current offerings of the course).
 
 ## Setup of the repository
 
-TODO: add folder structure / use template -> create repository / image
+Let's start with the first step and create a new repository from the [basic Bioschemas tutorial template](https://github.com/elixir-europe-training/ELIXIR-TrP-Bioschemas-HTML-Template). Once you have opened the link in your browser, you can create a new GitHub repository by clicking on the green 'Use template' button.
+Enter a new name for the created repository e.g. ELIXIR-TrP-Bioschemas-HTML under your own GitHub account.
+
+As said before, we anticipate the following basic setup: we have one HTML page which describes the course aka the training event called index.html and one HTML file tutorial01.html for the training material. 
+
+## HTML code for a training course page
+
+Let's explore the provided files and annotate them step by step. Open the index.html with Edit mode on Github. It has a quite simple structure: 
+
+```
+<!DOCTYPE html>
+<html>
+  <head>
+      <script type="application/ld+json">
+         insert Bioschemas annotation about course here
+      </script>
+  </head>
+  <body>
+     <h2 id="lesson-overview">Lesson overview</h2>
+     ...
+  </body>
+</html>
+```
+
+All HTML documents must start with a <!DOCTYPE> declaration. The declaration is not an HTML tag. It is an "information" to the browser about what document type to expect.
+
+This is an example of an HTML file with three HTML elements - `<html>`, `<head>`, and `<body>`. An HTML element is defined by a start tag, some content, and an end tag. For the outer `html` element (`html` is the tagname), the start tag is `<html>` and the end tag is `</html>`. The `/` in front of the tagname indicates an end tag. 
+
+The `<html>` element is the root element of an HTML page. The `<head>` element contains meta information about the HTML page and the `<body>` element defines the document's body, and is a container for all the visible contents, such as headings, paragraphs, images, hyperlinks, tables, lists, etc.
+
+Now, let's focus on the markup of the HTML page. There are several technical options to markup an HTML file, we focus on using a [JSON-LD](https://en.wikipedia.org/wiki/JSON-LD) object in combination with a [Bioschemas](https://bioschemas.org/) annotation.
+
+As you see in the code example above, the markup of the HTML page with the Bioschemas annotation as a JSON-LD object needs to be added to the `<head>` element and be included in a `<script>` element with the [attribute](https://www.w3schools.com/html/html_attributes.asp) `type="application/ld+json"`.
+
+Since we are annotating a course, we use the Bioschemas profiles `Course/CourseInstance`. The rather elaborate annotation according to these Bioschemas profiles is shown below. Note that it is using the annotation for the associated training material, too. This annotation is added via the property `hasPart`. We will have a look at the training material annotation later on. For now, you could copy the JSON-LD object shown below in the HTML file.
+
+The JSON-LD object has several property-value pairs. We have created a table for an easier overview about what properties we need to fill in or annotate for the Course. If you some explanation about the properties, please have a [detailed look](https://bioschemas.org/profiles/Course/1.0-RELEASE) on the Bioschemas page.
+
+| property   | values   |
+| :--------- | :--------- |
+| @contect   | https://schema.org/    |
+| @type   | Course    |
+| description   | ELIXIR Bioschemas Annotation Guide |
+| keywords   | Bioschemas, Schema validation, Harvesting markup, Deploying markup |
+| name   | Bioschemas Annotation Guide for training material |
+| hasPart  | contains a JSON-LD using the TrainingMaterial profile |
+| hasCourseInstance  | contains a JSON-LD using the CourseInstance profile |
+
+We have created another table for an easier overview about what properties we need to fill in or annotate for the CourseInstance. If you some explanation about the properties, please have a [detailed look](https://bioschemas.org/profiles/CourseInstance/1.0-RELEASE) on the Bioschemas website.
+
+| property   | values   |
+| :--------- | :--------- |
+| @context   | https://schema.org/    |
+| @type   | CourseInstance    |
+| courseMode | online |
+| location   | Virtual |
+| startDate | 2022-01-10 |
+| endDate | 2022-01-10 |
+| inLanguage | en-GB |
+| url       | https://www.workshops.org | 
+| instructor | This will be a structured list of Persons  |
+
+```json
+{
+  "@context":"https://schema.org/",
+  "@type":"Course",
+  "http://purl.org/dc/terms/conformsTo":{
+    "@type":"CreativeWork",
+    "@id":"https://bioschemas.org/profiles/Course/1.0-RELEASE"
+  },
+  "description":"ELIXIR Bioschemas Annotation Guide",
+  "keywords":"Bioschemas, Schema validation, Harvesting markup, Deploying markup",
+  "name":"Bioschemas Annotation Guide for training material",
+  "hasPart":[
+    {"@type":"LearningResource",
+    "@id":"https://dx.doi.org/10.4126/FRL01-006432243",
+    "http://purl.org/dc/terms/conformsTo":{
+      "@type":"CreativeWork",
+      "@id":"https://bioschemas.org/profiles/TrainingMaterial/1.0-RELEASE"
+    },
+    "description":"This training material provides a comprehensive guide for annotating websites that host training events and materials. It begins with the basics of website annotation, offering foundational knowledge essential for understanding the process. The course then delves into the specifics of Bioschemas annotation, demonstrating how to apply it to an HTML page to enhance discoverability and interoperability. Following this, the guide explores the integration of Bioschemas with popular static site generators and content management systems, including Jekyll, Mkdocs, and Wordpress. Each section provides practical examples and step-by-step instructions to ensure learners can effectively implement Bioschemas annotations in their own projects. This training is designed to equip participants with the skills needed to improve the visibility and accessibility of their training content on the web.",
+    "keywords":"Bioschemas, Schema validation, Harvesting markup, Deploying markup, Training material",
+    "name":"ELIXIR Guide for Bioschemas Annotation of Training Assets"
+    }
+  ],
+  "hasCourseInstance":[
+    {
+      "@type":"CourseInstance",
+      "http://purl.org/dc/terms/conformsTo":{
+        "@type":"CreativeWork",
+        "@id":"https://bioschemas.org/profiles/CourseInstance/1.0-RELEASE"
+      },
+      "courseMode":"online",
+      "location":"Virtual",
+      "startDate":"2022-01-10",
+      "endDate":"2022-01-10",
+      "inLanguage":"en",
+      "url":"https://www.workshops.org",
+      "instructor":[
+        {
+          "@type":"Person",
+          "name":"Alexander Botzki",
+          "@id":"https://orcid.org/0000-0001-6691-4233",
+          "url":"https://orcid.org/0000-0001-6691-4233"
+        },{
+          "@type":"Person",
+          "name":"Bruna Piereck",
+          "@id":"https://orcid.org/0000-0001-5958-0669",
+          "url":"https://orcid.org/0000-0001-5958-0669"
+        }
+      ]
+    }
+  ]
+}
+```
 
 ## HTML code for a training material page
 
-Let’s create a new folder called _layouts and have a new empty file called tutorial-material.html inside. This is where our HTML template used to render our tutorial will be.
-
-Open tutorial-material.html and add the following text:
+Open the tutorial01.html in Edit mode. It has a quite simple structure:
 
 ```html
 <!DOCTYPE html>
@@ -33,19 +150,20 @@ Open tutorial-material.html and add the following text:
   </body>
 </html>
 ```
-TODO: add explaination of DOCTYPE
 
-This is an example of an HTML file with three HTML elements - `<html>`, `<head>`, and `<body>`. An HTML element is defined by a start tag, some content, and an end tag. For the outer `html` element (`html` is the tagname), the start tag is `<html>` and the end tag is `</html>`. The `/` in front of the tagname indicates an end tag. 
+Since we are annotating a course, we use the Bioschemas profiles `Course/CourseInstance`. The JSON-LD object has several property-value pairs. We have created a table for an easier overview about several important properties we need to fill in or annotate for the Course. If you some explanation about the properties, please have a [detailed look](https://bioschemas.org/profiles/TrainingMaterial/1.0-RELEASE) on the Bioschemas page.
 
-TODO: what is an attribute?
+| property   | values   |
+| :--------- | :--------- |
+| @contect   | https://schema.org/    |
+| @type   | Course    |
+| description   | This guide will show you how to do add Schema.org markup to a GitHub Pages site. |
+| keywords   | Bioschemas, schema.org, JSON-LD, GitHub pages |
+| name   | Adding Schema.org/Bioschemas annotation to a GitHub Pages site |
+| educationalLevel  | beginner |
+| inLanguage  | en-GB |
+| license  |  CC-BY 4.0   |
 
-The `<html>` element is the root element of an HTML page. The `<head>` element contains meta information about the HTML page and the `<body>` element defines the document's body, and is a container for all the visible contents, such as headings, paragraphs, images, hyperlinks, tables, lists, etc.
-
-TODO: add reference to https://www.w3schools.com/
-
-TODO: what is a JSON-LD object?
-
-As you see in the code example above, the markup of the HTML page with the Bioschemas annotation as a JSON-LD object needs to be added to the `<head>` element and be included in a `<script>` element with the attribute `type="application/ld+json"`.
 
 The rather elaborate annotation according to Bioschemas profile `TrainingMaterial` looks like this:
 
@@ -65,7 +183,7 @@ The rather elaborate annotation according to Bioschemas profile `TrainingMateria
     }
   ],
   "description":"This guide will show you how to do add Schema.org markup to a GitHub Pages site.",
-  "keywords":"schema.org, TeSS, GitHub pages",
+  "keywords":"schema.org, Bioschemas, JSON-LD, GitHub pages",
   "name":"Adding Schema.org to a GitHub Pages site",
   "about":[{"@id":"https://schema.org"},{"@id":"http://edamontology.org/topic_0089"}],
   "author":[
@@ -94,106 +212,31 @@ The rather elaborate annotation according to Bioschemas profile `TrainingMateria
   ],
   "dateModified":"2021-07-22",
   "license":"CC-BY 4.0",
-    "version":2.0
+  "version":2.0
   }
 ```
 This examples uses most of the properties specified in the Bioschemas profile [TrainingMaterial](https://bioschemas.org/profiles/TrainingMaterial/1.0-RELEASE). It is quite tedious to create the JSON-LD objects manually, so we would recommend to start from the above example as a template.
 
-TODO: demonstrate tools to edit JSON-LD object template
-
 In the example code, replace `insert bioschemas annotation here` by the JSON-LD object and save the HTML file.
 
-## 1.2 HTML code for a training course page
-Let’s create a new folder called _layouts and have a new empty file called tutorial-course.html inside. This is where our HTML template used to render our tutorial will be.
+Thanks to the [Biohackathon 2024 project 10](https://github.com/elixir-europe/biohackathon-projects-2024/blob/main/10.md), we have been made aware of the [Data Discovery Engine](https://discovery.biothings.io/markup-generator) website where you can create JSON-LD objects following the definitions of various Bioschemas profiles. [Here](https://discovery.biothings.io/markup-generator?schema_class=bioschemas:TrainingMaterial) is the direct link to generate a Bioschemas-compliant JSON-LD object for the profile TrainingMaterial.
 
-Open tutorial-course.html and add the following:
+If you use this approach, it is quite simple to create a valid JSON-LD object which you could copy paste into the HTML page tutorial01.html.
 
-```
-<!DOCTYPE html>
-<html>
-  <head>
-      <script type="application/ld+json">
-         insert Bioschemas annotation here
-      </script>
-  </head>
-  <body>
-     insert content here
-  </body>
-</html>
-```
-The rather elaborate annotation according to Bioschemas profiles `Course/CourseInstance` looks like this. Note that it is using the annotation for the associated training material, too. This annotation is added via the property `hasPart`.
+Yet another alternative could be using [TeSS](https://tess.elixir-europe.org/) and registering the training material manually in the [sandbox version](https://dev.tess.elixir-europe.org/) of TeSS. By following [this tutorial](https://elixir-europe-training.github.io/ELIXIR-TrP-TeSS/chapters/chapter_02/#scenario-5-manual-registration-of-training-material-in-tess), you could add training material to the sandbox of TeSS and use the validation step shown below to get access to the JSON-LD object.
+ 
+## Publish training course and material via GitHub
 
-```json
-{
-   "@context":"https://schema.org/",
-   "@type":"Course",
-  "http://purl.org/dc/terms/conformsTo":{
-    "@type":"CreativeWork",
-    "@id":"https://bioschemas.org/profiles/Course/1.0-RELEASE"
-  },
-  "description":"Bioschemas Tutorial at SWAT4HCLS Leiden",
-  "keywords":"Bioschemas, SWAT4HCLS, Schema validation, Harvesting markup, Deploying markup",
-  "name":"Bioschemas - Deploying and Harvesting Markup",
-  "hasPart":[
-    {"@type":"LearningResource",
-    "@id":"https://dx.doi.org/10.4126/FRL01-006432243",
-    "http://purl.org/dc/terms/conformsTo":{
-      "@type":"CreativeWork",
-      "@id":"https://bioschemas.org/profiles/TrainingMaterial/1.0-RELEASE"
-    },
-    "description":"Bioschemas Tutorial at SWAT4HCLS Leiden",
-    "keywords":"Bioschemas, SWAT4HCLS, Schema validation, Harvesting markup, Deploying markup",
-    "name":"Bioschemas - Deploying and Harvesting Markup"
-    }
-  ],
-  "hasCourseInstance":[
-    {
-      "@type":"CourseInstance",
-      "http://purl.org/dc/terms/conformsTo":{
-        "@type":"CreativeWork",
-        "@id":"https://bioschemas.org/profiles/CourseInstance/0.8-DRAFT-2020_10_06"
-      },
-      "courseMode":"online",
-      "location":"Virtual, and Fletcher Wellness-Hotel, Leiden, The Netherlands",
-      "startDate":"2022-01-10",
-      "endDate":"2022-01-10",
-      "inLanguage":"en",
-      "url":"https://www.swat4ls.org/workshops/leiden2022/",
-      "instructor":[
-        {
-          "@type":"Person",
-          "name":"Alban Gaignard",
-          "@id":"https://bioschemas.org/people/AlbanGaignard",
-          "url":"https://bioschemas.org/people/AlbanGaignard"
-        },{
-          "@type":"Person",
-          "name":"Leyla Jael Castro",
-          "@id":"https://bioschemas.org/people/LeylaGarcia",
-          "url":"https://bioschemas.org/people/LeylaGarcia"
-        },{
-          "@type":"Person",
-          "name":"Alasdair Gray",
-          "@id":"https://bioschemas.org/people/AlasdairGray",
-          "url":"https://bioschemas.org/people/AlasdairGray"
-        }
-      ]
-    }
-  ]
-}
-```
+Please refer to the [steps](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site) described in the documentation of GitHub.
 
-TODO: add explanation of the various properties and reference the extensive documentation of the Bioschemas profile.
-
-## 1.3 Publish training course and material via github
-
-TODO: add content from https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site
-
-## 1.4 Validate the annotation
+## Validate the markup of the page with the Schema.org validator
 
 Validate the individual page with the [schema.org validator](https://validator.schema.org/) by pasting the URL into the Fetch URL tab. The validation procedure will indicate if you have used non-existing properties of the Bioschemas profile. If error messages are returned, have a look at the troubleshooting section below.
 
-TODO: Add image from TeSS course
+![screenshot of about schema.org validator](https://raw.githubusercontent.com/elixir-europe-training/ELIXIR-TrP-TeSS/refs/heads/main/docs/assets/images/b369eIQ.png)
 
-![screenshot of about schema.org validator](./../assets/images/b369eIQ.png)
+## References
 
+- Small quantities of content from w3school.com have been used in the context of FAIR use.
+- Relevant profiles for training have been used as well as example snippets of the JSON-LD objects from https://bioschemas.org/. 
 
