@@ -2,7 +2,7 @@
 
 
 For instruction on how to use the template, please follow this documentation: 
-https://elixir-europe-training.github.io/ELIXIR-TrP-Bioschemas/
+https://elixir-europe-training.github.io/ELIXIR-TrP-Bioschemas/ 
 
 
 **Any issues?** Contact Alexander Botzki (@abotzki) 
