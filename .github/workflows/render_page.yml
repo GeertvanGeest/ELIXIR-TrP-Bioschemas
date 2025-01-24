@@ -8,6 +8,7 @@ on:
     # every week on Sunday
     - cron: "0 0 * * 0"
 
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
